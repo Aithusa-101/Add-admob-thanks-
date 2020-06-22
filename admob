@@ -1,0 +1,138 @@
+
+
+
+
+import 'package:firebase_admob/firebase_admob.dart';
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'Jobdetail.dart';
+
+class Marketplace extends StatefulWidget {
+  Marketplace({Key key}) : super(key: key);
+
+  @override
+  _MarketplaceState createState() => _MarketplaceState();
+}
+
+class _MarketplaceState extends State<Marketplace> {
+  Object get itemDetails => null;
+
+  
+  
+  @override
+  Widget build(BuildContext context) {
+    FirebaseAdMob.instance.initialize(appId: "ca-app-pub-6091186048359559~9187003654");
+     
+    return Scaffold(
+  appBar: AppBar(
+        backgroundColor: Colors.black,
+        title: Text('Dashboard'),
+      ),
+
+ body: StreamBuilder(
+      stream: Firestore.instance.collection('Jobs').snapshots(),
+      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        if (!snapshot.hasData) return Center( child: Column(            children: <Widget>[
+             Center(child: CircularProgressIndicator()),           ],
+          ));   
+ 
+return new ListView(
+   
+children: snapshot.data.documents.map((document) {
+
+
+   print(document);
+        
+      var storeDetails = {
+        'title': document['title'],
+         'company': document['company'],
+            'about': document['about'],
+                'mission': document['mission'],
+                 'city': document['city'],
+                  'country': document['country'],
+                 'email': document['email'],
+                 'phone': document['phone'],
+                  'salary': document['salary'],
+                  'deadline': document['deadline'],
+                  'description': document['description'],
+                   'responsibility': document['responsibility'],
+                   'qualification': document['qualification'],
+                   'employmentType': document['employmentType'],
+                  'jobFunction': document['jobFunction'],
+                  'industry': document['industry'],
+         };
+        
+          return new     Card( 
+               
+           elevation: 5,
+          child: InkWell(
+            
+            onTap: (){
+
+                          // Navigator.push( context, new MaterialPageRoute(builder: (context) => Jobdetail(jsonEncode(storeDetails),storeDetails["title"])),);
+        Navigator.push(
+     context,
+   MaterialPageRoute(builder: (context) => Jobdetail()
+//  MaterialPageRoute(builder: (context) => Jobdetail(Jobdetail(Jobdetail)),
+      ));
+             },
+
+           child: Column(
+             mainAxisSize: MainAxisSize.min,
+
+             children: [
+            ListTile(
+   title: Text(document["title"]),
+   isThreeLine: true,
+   subtitle: Column(
+     
+   children: <Widget>[
+     
+
+      Text(document['company']),
+     Text(document['city']),
+      Text(document['email']),
+   ]),
+   trailing:  Text(document['deadline']),
+ )
+
+            ])));}).toList(),);
+            
+    
+    }));
+   
+ }}
+
+
+  MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+  keywords: <String>['Jobs', 'Career'],
+  contentUrl: 'https://facebook.com',
+   birthday: DateTime.now(),
+  childDirected: false,
+  designedForFamilies: false,
+  gender: MobileAdGender.male, // or MobileAdGender.female, MobileAdGender.unknown
+  testDevices: <String>[],
+   // or MobileAdGender.female, MobileAdGender.unknown
+);
+
+BannerAd myBanner = BannerAd(
+  // Replace the testAdUnitId with an ad unit id from the AdMob dash.
+  // https://developers.google.com/admob/android/test-ads
+  // https://developers.google.com/admob/ios/test-ads
+  adUnitId: "ca-app-pub-2576011194794690/5245842922",
+  size: AdSize.smartBanner,
+  targetingInfo: targetingInfo,
+  listener: (MobileAdEvent event) {
+    print("BannerAd event is $event");
+  },
+);          
+    
+     
+
+      
+    
+    
+      
+    
+
